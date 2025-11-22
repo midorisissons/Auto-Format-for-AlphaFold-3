@@ -7,73 +7,55 @@ The protein sequence is retrieved from the uniprot server using its ID. The sequ
 This section can be skipped if you want to manually enter protein sequences.
 """
 
-import csv
-from csv import writer
-from csv import reader
+def downloadSequence(path, protID):
+  # make request
+  baseUrl = "http://www.uniprot.org/uniprot/"
+  currentUrl = baseUrl+protID+".fasta"
+  response = requests.post(currentUrl)
 
-path = "/content/drive/MyDrive/AlphaFold_project/" # change to path for save location
+  # get sequence
+  cData = ''.join(response.text)
+  Seq = StringIO(cData)
+  pSeq = list(SeqIO.parse(Seq,'fasta'))
+  sequence = pSeq[0].seq
 
-import requests as r
-from Bio import SeqIO
-from io import StringIO
+  # store protein ID and sequence to csv file. If protein ID already exists, do not duplicate
+  fields = ['id', 'seq']
+  entry = [pSeq[0].id, pSeq[0].seq  ]
+  flag = False
 
-cID = 'Q8IUZ5' #replace with the ID to get sequence from
+  with open(path + 'uniprot_sequences.csv', 'r+') as csvfile:
+    csvreader = reader(csvfile)
 
-baseUrl = "http://www.uniprot.org/uniprot/"
-currentUrl = baseUrl+cID+".fasta"
-response = r.post(currentUrl)
-cData = ''.join(response.text)
+    for row in csvreader:
+      if entry[0] == row[0]:
+        flag = True
+        print(f"id {entry[0]} already exists in csv")
+        break
 
-Seq = StringIO(cData)
-pSeq = list(SeqIO.parse(Seq,'fasta'))
+    if flag == False:
+        csvwriter = writer(csvfile)
+        csvwriter.writerow(entry)
+        csvfile.close()
 
-sequence = pSeq[0].seq
+def getSequence(path, seqID):
+  sequence = ""
+  with open(path + 'uniprot_sequences.csv', 'r+') as csvfile:
+    csvreader = reader(csvfile)
 
-#add the protein ID+sequence to the csv file for storage. If the protein ID already exists, it will not duplicate
+    for row in csvreader:
+      if row[0] == seqID: #search protein ID in csv file
+        sequence = row[1] #store protein sequence in the variable 'sequence'
+        break
+  if sequence =="":
+    print("ID not found; no sequence retrieved")
 
-fields = ['id', 'seq']
-entry = [pSeq[0].id, pSeq[0].seq  ]
-flag = False
+  return sequence
 
-with open(path + 'uniprot_sequences.csv', 'r+') as csvfile:
-  csvreader = reader(csvfile)
 
-  for row in csvreader:
-    if entry[0] == row[0]:
-      flag = True
-      print(f"id {entry[0]} already exists in csv")
 
-  if flag == False:
-      csvwriter = writer(csvfile)
-      csvwriter.writerow(entry)
-      csvfile.close()
 
-#list out all IDs present in csv file. use these IDs to retrieve sequence later
 
-with open(path + 'uniprot_sequences.csv', 'r+') as csvfile:
-  csvreader = reader(csvfile)
-  for row in csvreader:
-    print(row[0])
-
-"""## Get protein sequence from csv file with the ID
-
-Retrieve the previously stored protein sequence from storage CSV file via their ID.
-"""
-
-#get sequence of protein from csv file using protein ID
-
-id = 'sp|Q8IUZ5|AT2L2_HUMAN' #ID of protein seq to search in csv
-
-with open(path + 'uniprot_sequences.csv', 'r+') as csvfile:
-  csvreader = reader(csvfile)
-
-  for row in csvreader:
-    if row[0] == id: #search protein ID in csv file
-      sequence = row[1] #store protein sequence in the variable 'sequence'
-
-#ALTERNATIVE: use this block if you do not use a stored ID + sequence from the CSV file
-id = "NC_NTDLKR"
-sequence = "KTEEGKLVIWINGDKGYNGLAEVGKKFEKDTGIKVTVEHPDKLEEKFPQVAATGDGPDIIFWAHDRFGGYAQSGLLAEITPAAAFQDKLYPFTWDAVRYNGKLIAYPIAVEALSLIYNKDLLPNPPKTWEEIPALDKELKAKGKSALMFNLQEPYFTWPLIAADGGYAFKYAAGKYDIKDVGVDNAGAKAGLTFLVDLIKNKHMNADTDYSIAEAAFNKGETAMTINGPWAWSNIDTSAVNYGVTVLPTFKGQPSKPFVGVLSAGINAASPNKELAKEFLENYLLTDEGLEAVNKDKPLGAVALKSYEEELVKDPRVAATMENAQKGEIMPNIPQMSAFWYAVRTAVINAASGRQTVDAALAAAQTNAAA"
 
 """## Get Json file for full protein sequence (no fragments)
 
@@ -99,49 +81,89 @@ Find more information about making your own template:
 https://gitlab.rc.uab.edu/rc-data-science/community-containers/Alphafold3/-/blob/6166cdc03cb35acb23815aab7aeb749c213c6d8a/docs/input.md
 """
 
-#information for task name
+def newFullLengthJob(path):
+  # Make job name
+  jobName = input("Enter job name (without date): ")
+  date = datetime.today().strftime('%Y/%-m/%-d')
+  jobName = f"{date}_{jobName}"
+  print(f"Job Name: {jobName}")
+
+  # Add protein sequences
+  sequences = []
+  print("Add protein sequences now...")
+  while True:
+    seqID = input("Enter seqID (press enter if finished with proteins)")
+    if seqID == "":
+      # Move on to ligands
+      break
+    
+    # Retrieve sequence
+    sequence = getSequence(path, seqID)
+
+    count = input("Enter sequence count: ")
+
+    # Add to sequences
+    sequences.append({"proteinChain": {"sequence": sequence, "count": count}})
+
+  # Add ligands
+  ligands = []
+  print("Add ligands now...")
+  while True:
+    ligID = input("Enter ligand ID (press enter if finished with ligands)")
+    if ligID == "":
+      # Move on to ions
+      break
+
+    count = input("Enter ligand count: ")
+
+    # Add to ligands
+    ligands.append({"ligand": {"ligand": ligID, "count": count}})
+
+  # Add ions
+  ions = []
+  print("Add ions now...")
+  while True:
+    ionID = input("Enter ion ID (press enter if finished with ions)")
+    if ionID == "":
+      # Move on to finalising job
+      break
+
+    count = input("Enter ion count: ")
+
+    # Add to ligands
+    ions.append({"ion": {"ion": ligID, "count": count}})
+
+  jobTemplate = """{
+  "name": " """+jobName+""" ",
+  "modelSeeds": [],
+  "sequences": """+(sequences+ligands+ions)+""",
+  "dialect": "alphafoldserver",
+  "version": 1
+  }"""
+
+  return jobTemplate
+
+
+
+
 
 date = "2025-02-09"
 testprotein_name = "NC_NTDLKR"
 
 #make new folder for protein ID within the path you provided - new folder for each protein
 
-import os
 
 os.mkdir( f"{path}{id}" )
 
 #create Json task files for protein of interest + CK2 holoenzyme, protein of interest + CK2beta
 
 all_tasks = "[\n"
-insert_seq = "\"" + sequence + "\""
 
 #Holoenzyme
 
 taskname = f"{date}_CK2holo_and_full_{testprotein_name}"
 
-template = """{
-"name": " """+taskname+""" ",
-"modelSeeds": [],
-"sequences": [
-  {"proteinChain": {
-        "sequence": "MSGPVPSRARVYTDVNTHRPREYWDYESHVVEWGNQDDYQLVRKLGRGKYSEVFEAINITNNEKVVVKILKPVKKKKIKREIKILENLRGGPNIITLADIVKDPVSRTPALVFEHVNNTDFKQLYQTLTDYDIRFYMYEILKALDYCHSMGIMHRDVKPHNVMIDHEHRKLRLIDWGLAEFYHPGQEYNVRVASRYFKGPELLVDYQMYDYSLDMWSLGCMLASMIFRKEPFFHGHDNYDQLVRIAKVLGTEDLYDYIDKYNIELDPRFNDILGRHSRKRWERFVHSENQHLVSPEALDFLDKLLRYDHQSRLTAREAMEHPYFYTVVKDQARMGSSSMPGGSTPVSSANMMSGISSVPTPSPLGPLAGSPVIAAANPLGMPVPAAAGAQQ",
-        "count": 2
-    } },
-  {"proteinChain": {
-        "sequence": "MSSSEEVSWISWFCGLRGNEFFCEVDEDYIQDKFNLTGLNEQVPHYRQALDMILDLEPDEELEDNPNQSDLIEQAAEMLYGLIHARYILTNRGIAQMLEKYQQGDFGYCPRVYCENQPMLPIGLSDIPGEAMVKLYCPKCMDVYTPKSSRHHHTDGAYFGTGFPHMLFMVHPEYRPKRPANQFVPRLYGFKIHPMAYQLQLQAASNFKSPVKTIR",
-        "count": 2
-    } },
-  {"ligand": {"ligand": "CCD_ADP", "count": 2} },
-  {"ion": {"ion": "MG", "count": 2} },
-  {"ion": {"ion": "ZN", "count": 2} },
-  {"proteinChain": {
-        "sequence": """+insert_seq+""",
-        "count": 2
-    } }
-],
-"dialect": "alphafoldserver",
-"version": 1
-}"""
+
 
 all_tasks += template + ",\n"
 

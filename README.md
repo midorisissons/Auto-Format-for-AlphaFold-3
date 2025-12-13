@@ -6,12 +6,15 @@ Automated formatting of JSON files for AlphaFold 3, with fragmenting of protein 
 [Download and install Python](https://www.python.org/downloads/)
 ### 2. Download code from GitHub
 [Download and extract zip from GitHub](https://github.com/midorisissons/Auto-Format-for-AlphaFold-3/archive/refs/heads/main.zip)
-### 3. Run setup
-Navigate to the extracted folder named Auto-Format-for-AlphaFold-3-main in your terminal.
-For MacOS/Linux, run setup.sh 🤫 in the extracted folder by "sh setup.sh". For Windows run setup.bat 🦇.
-### 4. Ready to run
-Run the code in your terminal.
-For MacOS/Linux, run AutoFormatAF.sh. For Windows run AutoFormatAF.bat.
+### 3. Extract the folder
+Opening the zip file will make a folder called Auto-Format-for-AlphaFold-3-main. All AlphaFold protein sequences, fragments, and jobs will be stored here, so move the folder to where you wish on your computer.
+### 4. Setup
+For MacOS/Linux, run setup.sh 🤫 in the extracted folder by `sh setup.sh` directly in your terminal
+For Windows run setup.bat 🦇 by double clicking the file 
+
+### 5. Ready to run
+For MacOS/Linux, run AutoFormatAF.sh directly in your terminal by `sh AutoFormatAF.sh`. Make sure you are currently in the directory of the extracted folder.
+For Windows, run AutoFormatAF.bat by double clicking the file.
 
 ## Functionalities
 Auto-Format-for-AlphaFold-3 has three main functionalities, described below.

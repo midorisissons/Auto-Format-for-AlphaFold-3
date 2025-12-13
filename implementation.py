@@ -11,9 +11,9 @@ def manualInputSequence(filepath):
   Seq = input("Enter protein seq: ")
   id = input("Enter id for storing the seq: ")
 
-  open(filepath + '/store_sequences.csv', 'a')
+  open(filepath + '/store_sequences.csv', 'a', newline="")
 
-  with open(filepath + '/store_sequences.csv', 'r+') as csvfile:
+  with open(filepath + '/store_sequences.csv', 'r+', newline="") as csvfile:
     csvreader = csv.reader(csvfile)
     flag = False
 
@@ -51,9 +51,9 @@ def downloadSequence(filepath, protID):
   if altID != "":
     entry[0] = altID
 
-  open(filepath + '/store_sequences.csv', 'a')
+  open(filepath + '/store_sequences.csv', 'a', newline="")
 
-  with open(filepath + '/store_sequences.csv', 'r+') as csvfile:
+  with open(filepath + '/store_sequences.csv', 'r+', newline="") as csvfile:
     csvreader = csv.reader(csvfile)
     flag = False
     for row in csvreader:
@@ -72,7 +72,7 @@ def downloadSequence(filepath, protID):
 
 def getSequence(filepath, seqID):
   sequence = ""
-  with open(filepath + '/store_sequences.csv', 'r+') as csvfile:
+  with open(filepath + '/store_sequences.csv', 'r+', newline="") as csvfile:
     csvreader = csv.reader(csvfile)
 
     for row in csvreader:
@@ -219,7 +219,7 @@ def fragment(sequence, filepath):
       i=i+fragSize+remainder_per_block-overlapSize
 
   filename = f"{id}_size{fragSize}_overlap{overlapSize}_residues{start_residue+1}-{end_residue}"
-  with open(f"{filepath}/fragments/{id}/{filename}.csv", 'w+') as csvfile:
+  with open(f"{filepath}/fragments/{id}/{filename}.csv", 'w+', newline="") as csvfile:
     csvwriter = csv.writer(csvfile)
 
     for i in range(len(fragments)):
@@ -292,7 +292,7 @@ def newFragmentJob(filepath):
   os.makedirs(filepath+'/jobs/' + jobName, exist_ok=True)
   
   tempjobName = ""
-  with open(fragments_filepath, 'r+') as csvfile:  # open fragments file and read per line
+  with open(fragments_filepath, 'r+', newline="") as csvfile:  # open fragments file and read per line
     csvreader = csv.reader(csvfile)
     all_tasks = ""
     for row in csvreader: #each fragment

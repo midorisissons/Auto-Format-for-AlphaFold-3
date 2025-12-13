@@ -27,7 +27,7 @@ while userChoice != 4:
     
     elif getSeqMethod == 3:
       print("IDs contained within your CSV file:")
-      with open(path + '/store_sequences.csv', 'r+') as csvfile:
+      with open(path + '/store_sequences.csv', 'r+', newline="") as csvfile:
           csvreader = csv.reader(csvfile)
           for row in csvreader:
             print(row[0])

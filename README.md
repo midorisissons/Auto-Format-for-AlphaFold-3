@@ -7,5 +7,30 @@ Automated formatting of JSON files for AlphaFold 3, with fragmenting of protein 
 ### 2. Download code from GitHub
 [Download and extract zip from GitHub](https://github.com/midorisissons/Auto-Format-for-AlphaFold-3/archive/refs/heads/main.zip)
 ### 3. Run setup
-For MacOS/Linux, run setup.sh 🤫 in the extracted folder. For Windows run setup.bat 🦇.
+Navigate to the extracted folder named Auto-Format-for-AlphaFold-3 in your terminal.
+For MacOS/Linux, run setup.sh 🤫 in the extracted folder by "sh setup.sh". For Windows run setup.bat 🦇.
 ### 4. Ready to run
+Run the code in your terminal.
+For MacOS/Linux, run AutoFormatAF.sh. For Windows run AutoFormatAF.bat.
+
+## Functionalities
+Auto-Format-for-AlphaFold-3 has three main functionalities, described below.
+
+### 1. Get a protein sequence
+The program is able to retrieve and store protein sequences of interest into a storage CSV file "store_sequences.csv" within the extracted folder.
+*Protein sequences can be saved via two methods:*
+1. Manual input - manually input the protein ID and sequence
+2. Download from UniProt - enter the UniProt ID (eg. Q8IUZ5) to automatically retrieve the sequence
+Stored protein sequences can be retrieved via their stored ID
+
+### 2. Fragment a protein sequence
+The program can take a stored protein sequence and fragment it. The user can input the desired fragment size and overlap size, as well as section of the protein sequence of interest (start residue:end residue). If there is a remainder, some of the fragments' lengths are extended by one to use the full sequence.
+
+Fragments are stored in the "fragments" folder in the extracted folder, under a CSV file named `ID_size[size]_overlap[overlapsize]_residues[startresidue]-[endresidue]`.
+
+### 3. Automatically make AlphaFold files
+AlphaFold Server takes JSON format files to make tasks. This program can automatically output JSON files with stores sequences/fragments, ions and ligands.
+1. Full length protein sequences - retrieved from the CSV store
+2. Fragment protein sequences - full CSV files are retrieved and read fragment-by-fragment from "fragments" folder. AlphaFold can only take up to 100 tasks in one JSON, if this is exceeded, multiple files may be outputted.
+
+[How to specify ions and ligands by CCD codes](https://github.com/google-deepmind/alphafold3/blob/main/docs/input.md)

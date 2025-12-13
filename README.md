@@ -7,7 +7,7 @@ Automated formatting of JSON files for AlphaFold 3, with fragmenting of protein 
 ### 2. Download code from GitHub
 [Download and extract zip from GitHub](https://github.com/midorisissons/Auto-Format-for-AlphaFold-3/archive/refs/heads/main.zip)
 ### 3. Run setup
-Navigate to the extracted folder named Auto-Format-for-AlphaFold-3 in your terminal.
+Navigate to the extracted folder named Auto-Format-for-AlphaFold-3-main in your terminal.
 For MacOS/Linux, run setup.sh 🤫 in the extracted folder by "sh setup.sh". For Windows run setup.bat 🦇.
 ### 4. Ready to run
 Run the code in your terminal.

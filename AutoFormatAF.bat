@@ -1,2 +1,2 @@
-#!.\venv\Scripts\python.exe
+call venv\Scripts\activate.bat
 python main.py

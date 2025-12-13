@@ -92,7 +92,8 @@ https://gitlab.rc.uab.edu/rc-data-science/community-containers/Alphafold3/-/blob
 def newFullLengthJob(filepath):
   # Make job name
   jobName = input("Enter job name (without date): ")
-  date = datetime.today().strftime('%Y-%-m-%-d')
+  d = datetime.today()
+  date = f"{d.year}-{d.month}-{d.day}"
   jobName = f"{date}_{jobName}"
   print(f"Job Name: {jobName}")
 
@@ -232,7 +233,8 @@ def fragment(sequence, filepath):
 def newFragmentJob(filepath):
   # Make job name
   jobName = input("Enter job name (without date): ")
-  date = datetime.today().strftime('%Y-%-m-%-d')
+  d = datetime.today()
+  date = f"{d.year}-{d.month}-{d.day}"
   jobName = f"{date}_{jobName}"
   print(f"Job Name: {jobName}")
 
